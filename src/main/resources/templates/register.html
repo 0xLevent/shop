@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <title>Register</title>
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="icon" href="images/fevicon.png" type="image/gif" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/jquery.mCustomScrollbar.min.css">
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+</head>
+<body>
+<div class="header_section header_bg">
+  <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="/index.html"><img src="/images/logo.png"></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/index">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/pages/about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/pages/coffees">Coffees</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/pages/blog">Blog</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/pages/contact">Contact</a>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <div class="login_bt">
+            <ul>
+              <li><a href="#"><span class="user_icon"><i class="fa fa-user" aria-hidden="true"></i></span>Login</a></li>
+              <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li>
+            </ul>
+          </div>
+        </form>
+      </div>
+    </nav>
+  </div>
+</div>
+<div class="contact_section layout_padding">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <h1 class="contact_taital">Register</h1>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="contact_section_2">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="mail_section_1">
+            <form action="/register" method="post">
+              <input type="text" class="mail_text" placeholder="Your Name" name="name" required>
+              <input type="email" class="mail_text" placeholder="Your Email" name="email" required>
+              <input type="password" class="mail_text" placeholder="Password" name="password" required>
+              <input type="password" class="mail_text" placeholder="Confirm Password" name="confirm_password" required>
+              <div class="send_bt"><button type="submit">Register</button></div>
+            </form>
+            <p class="mt-3">Already have an account? <a href="/login.html">Login here</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="footer_section layout_padding margin_top90">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="footer_social_icon">
+          <ul>
+            <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+            <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+            <li><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+            <li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+          </ul>
+        </div>
+        <div class="location_text">
+          <ul>
+            <li>
+              <a href="#">
+                <i class="fa fa-phone" aria-hidden="true"></i><span class="padding_left_10">+01 1234567890</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fa fa-envelope" aria-hidden="true"></i><span class="padding_left_10">demo@gmail.com</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="form-group">
+          <textarea class="update_mail" placeholder="Your Email" rows="5" id="comment" name="Your Email"></textarea>
+          <div class="subscribe_bt"><a href="#"><i class="fa fa-arrow-right" aria-hidden="true"></i></a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="copyright_section">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <p class="copyright_text">2020 All Rights Reserved. Design by <a href="https://html.design">Free Html Templates</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function() {
+    $('form').submit(function(event) {
+      event.preventDefault(); // Formun varsayılan gönderimini engelle
+
+      var formData = {
+        name: $('input[name="name"]').val(),
+        email: $('input[name="email"]').val(),
+        password: $('input[name="password"]').val(),
+        confirmPassword: $('input[name="confirm_password"]').val()
+      };
+
+      $.ajax({
+        type: 'POST',
+        url: '/api/auth/register',
+        data: JSON.stringify(formData),
+        contentType: 'application/json',
+        success: function(response) {
+          alert('Kayıt başarılı!');
+          window.location.href = '/login';
+        },
+        error: function(xhr) {
+          alert('Hata: ' + xhr.responseText); // Hata mesajını göster
+        }
+      });
+    });
+  });
+</script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/jquery-3.0.0.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="/js/custom.js"></script>
+</body>
+</html>

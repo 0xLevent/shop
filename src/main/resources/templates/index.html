@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Coffo - Ana Sayfa</title>
+   <link rel="stylesheet" href="/css/bootstrap.min.css">
+   <link rel="stylesheet" href="/css/style.css">
+   <link rel="stylesheet" href="/css/responsive.css">
+   <link rel="icon" href="/images/fevicon.png" type="image/gif">
+   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="/css/jquery.mCustomScrollbar.min.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+   <link rel="stylesheet" href="/css/websocket-notifications.css">
+</head>
+<body>
+
+<!-- WebSocket Bağlantı Durumu Göstergesi -->
+<div id="websocket-status" class="websocket-status">
+   <span class="status-icon"></span>
+   <span class="status-text">Bağlanıyor...</span>
+</div>
+
+<!-- Header Bölümü -->
+<div class="header_section">
+   <div class="container">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+         <a class="navbar-brand" href="/index.html"><img src="/images/logo.png" alt="Coffo Logo"></a>
+         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+         </button>
+         <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+               <li class="nav-item active">
+                  <a class="nav-link" href="/index">Ana Sayfa</a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link" href="/pages/about">Hakkımızda</a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link" href="/pages/coffees">Kahveler</a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link" href="/pages/blog">Blog</a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link" href="/pages/contact">Sepet</a>
+               </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+               <div class="login_bt">
+                  <ul>
+                     <!-- Giriş Butonu -->
+                     <li id="loginBtn">
+                        <a href="/login">
+                           <span class="user_icon"><i class="fa fa-user" aria-hidden="true"></i></span>Giriş Yap
+                        </a>
+                     </li>
+
+                     <!-- Çıkış Butonu -->
+                     <li id="logoutBtn" style="display: none;">
+                        <a href="#"><span class="user_icon"><i class="fa fa-sign-out" aria-hidden="true"></i></span>Çıkış Yap</a>
+                     </li>
+
+                     <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li>
+                  </ul>
+               </div>
+            </form>
+         </div>
+      </nav>
+   </div>
+</div>
+
+<!-- Ürünler Bölümü -->
+<div class="products_section layout_padding">
+   <div class="container">
+      <h1 class="section_title">Ürünlerimiz</h1>
+      <div id="loading" class="loading">Yükleniyor...</div>
+      <ul id="item-list" class="item-list"></ul>
+      <div id="error" class="error" style="display: none;"></div>
+   </div>
+</div>
+
+<!-- Footer Bölümü -->
+<div class="footer_section layout_padding">
+   <div class="container">
+      <div class="row">
+         <div class="col-md-12">
+            <div class="footer_social_icon">
+               <ul>
+                  <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                  <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                  <li><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                  <li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+               </ul>
+            </div>
+            <div class="location_text">
+               <ul>
+                  <li>
+                     <a href="#">
+                        <i class="fa fa-phone" aria-hidden="true"></i><span class="padding_left_10">+90 123 456 7890</span>
+                     </a>
+                  </li>
+                  <li>
+                     <a href="#">
+                        <i class="fa fa-envelope" aria-hidden="true"></i><span class="padding_left_10">info@coffo.com</span>
+                     </a>
+                  </li>
+               </ul>
+            </div>
+            <div class="form-group">
+               <textarea class="update_mail" placeholder="E-posta Adresiniz" rows="5" id="comment" name="E-posta"></textarea>
+               <div class="subscribe_bt"><a href="#"><i class="fa fa-arrow-right" aria-hidden="true"></i></a></div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+
+
+
+<!-- JavaScript Dosyaları -->
+<script src="/js/jquery.min.js"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/jquery-3.0.0.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script src="/js/websocket-client.js"></script>
+<script src="/js/products.js"></script>
+
+<script>
+   $(document).ready(function() {
+      // WebSocket bağlantısını başlat
+      const websocketManager = new WebSocketManager("http://localhost:8282/ws");
+
+      // WebSocket bağlantı durumunu güncelle
+      function updateWebSocketStatus(connected) {
+         const statusElement = document.getElementById("websocket-status");
+         if (statusElement) {
+            const icon = statusElement.querySelector(".status-icon");
+            const text = statusElement.querySelector(".status-text");
+
+            if (connected) {
+               icon.classList.add("connected");
+               icon.classList.remove("disconnected");
+               text.textContent = "Bağlı";
+            } else {
+               icon.classList.add("disconnected");
+               icon.classList.remove("connected");
+               text.textContent = "Bağlantı kesildi";
+            }
+         }
+      }
+
+      // WebSocket bağlantısı kurulduğunda
+      websocketManager.onConnect(() => {
+         updateWebSocketStatus(true);
+      });
+
+      // WebSocket bağlantısı kesildiğinde
+      websocketManager.onError(() => {
+         updateWebSocketStatus(false);
+      });
+
+      // Oturum durumunu kontrol et
+      function checkAuthStatus() {
+         const token = localStorage.getItem("token");
+         if (token && token !== "null" && token !== "") {
+            $("#loginBtn").hide();
+            $("#logoutBtn").show();
+         } else {
+            $("#loginBtn").show();
+            $("#logoutBtn").hide();
+         }
+      }
+
+      checkAuthStatus();
+
+      // Çıkış butonuna tıklanınca
+      $("#logoutBtn").on("click", function(e) {
+         e.preventDefault();
+         localStorage.removeItem("token");
+         alert("Çıkış yapıldı!");
+         checkAuthStatus();
+      });
+   });
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Sepetim</title>
+   <link rel="stylesheet" href="/css/bootstrap.min.css">
+   <link rel="stylesheet" href="/css/style.css">
+   <link rel="stylesheet" href="/css/responsive.css">
+   <link rel="icon" href="/images/fevicon.png" type="image/gif">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<div class="header_section">
+   <div class="container">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+         <a class="navbar-brand" href="/index"><img src="/images/logo.png" alt="Coffo Logo"></a>
+         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+         </button>
+         <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+               <li class="nav-item"><a class="nav-link" href="/index">Ana Sayfa</a></li>
+               <li class="nav-item"><a class="nav-link" href="/pages/about">Hakkımızda</a></li>
+               <li class="nav-item"><a class="nav-link" href="/pages/coffees">Kahveler</a></li>
+               <li class="nav-item"><a class="nav-link" href="/pages/blog">Blog</a></li>
+               <li class="nav-item"><a class="nav-link" href="/pages/contact">İletişim</a></li>
+               <li class="nav-item">
+                  <a class="nav-link" href="/cart.html">
+                     <i class="fa fa-shopping-cart"></i> Sepetim <span id="cart-count" class="badge badge-light">0</span>
+                  </a>
+               </li>
+            </ul>
+         </div>
+      </nav>
+   </div>
+</div>
+
+<!-- Sepet İçeriği -->
+<div class="container mt-5">
+   <h1 class="section_title">Sepetiniz</h1>
+   <div id="cart-items" class="cart-items"></div>
+   <p id="total-price" class="total-price">Toplam: 0 TL</p>
+   <button id="clear-cart" class="btn btn-danger">Sepeti Temizle</button>
+</div>
+
+<!-- Footer Bölümü -->
+<div class="footer_section layout_padding">
+   <div class="container">
+      <div class="row">
+         <div class="col-md-12">
+            <div class="footer_social_icon">
+               <ul>
+                  <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                  <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                  <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                  <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+               </ul>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+
+<!-- JavaScript Dosyaları -->
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script>
+   $(document).ready(function() {
+
+      $("#clear-cart").click(function() {
+         let token = localStorage.getItem("token");
+         if (!token) {
+            alert("İşlem yapmak için lütfen giriş yapın");
+            return;
+         }
+
+         $.ajax({
+            url: "http://localhost:8282/api/cart/clear",
+            method: "DELETE",
+            headers: {
+               "Authorization": "Bearer " + token
+            },
+            success: function(response) {
+               console.log("Sepet temizlendi:", response);
+               alert("Sepet başarıyla temizlendi");
+               // Sepeti yeniden yükle
+               loadCart();
+            },
+            error: function(xhr) {
+               console.error("Sepet temizlenirken hata oluştu:", xhr);
+               alert("Sepet temizlenirken bir hata oluştu.");
+            }
+         });
+      });
+
+      function loadCart() {
+         let token = localStorage.getItem("token");
+         if (!token) {
+            console.error("Token bulunamadı!");
+            return;
+         }
+
+         $.ajax({
+            url: "http://localhost:8282/api/cart/items",
+            method: "GET",
+            headers: {
+               "Authorization": "Bearer " + token
+            },
+            success: function(data) {
+               console.log("API'den dönen veri:", data);
+
+               let cartItemsContainer = $("#cart-items");
+               let totalPrice = 0;
+               cartItemsContainer.empty();
+
+               if (!data || data.length === 0) {
+                  cartItemsContainer.html("<p>Sepetiniz boş.</p>");
+               } else {
+                  data.forEach(item => {
+                     cartItemsContainer.append(`
+              <div class="cart-item">
+                <p>${item.itemName} - ${item.totalPrice / item.quantity} TL x ${item.quantity}</p>
+              </div>
+            `);
+                     totalPrice += item.totalPrice;
+                  });
+               }
+
+               $("#total-price").text("Toplam: " + totalPrice + " TL");
+               $("#cart-count").text(data.reduce((total, item) => total + item.quantity, 0));
+            },
+            error: function(xhr) {
+               console.error("Sepet yüklenirken hata oluştu:", xhr);
+               alert("Sepet yüklenirken hata oluştu.");
+            }
+         });
+      }
+
+      loadCart();
+   });
+
+
+</script>
+
+
+</body>
+</html>
