@@ -35,20 +35,17 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Extract username from token
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // Extract expiration date from token
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    // Extract userId from token
-    public Integer extractUserId(String jwt) {
+    public Long extractUserId(String jwt) {
         final Claims claims = extractAllClaims(jwt);  // Claims'i çıkar
-        return claims.get("userId", Integer.class);   // "userId"yi Integer olarak alın
+        return claims.get("userId", Long.class);   // "userId"yi Integer olarak alın
     }
 
 
@@ -65,12 +62,10 @@ public class JwtUtil {
                 .getBody();
     }
 
-    // Check if the token has expired
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    // Validate token
     public Boolean validateToken(String token) {
         try {
             return !isTokenExpired(token);

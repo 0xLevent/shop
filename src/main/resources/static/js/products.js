@@ -1,4 +1,8 @@
+console.log("✅ products.js yüklendi");
+
 document.addEventListener("DOMContentLoaded", () => {
+    console.log("🚀 DOMContentLoaded tetiklendi");
+
     const itemList = document.getElementById("item-list");
     const loading = document.getElementById("loading");
     const error = document.getElementById("error");
@@ -15,14 +19,35 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!response.ok) throw new Error("API isteği başarısız: " + response.status);
 
             const items = await response.json();
+            console.log("🧪 Gelen ürün verisi:", items); // ürünleri kontrol etmek için
+
             items.forEach((item) => {
+                console.log(`🧾 Ürün: ${item.name}, ID: ${item.id}`); // ← ürün ID’leri net görünsün
+
                 const li = document.createElement("li");
-                li.innerHTML = `
-                    <span>${item.name}</span>
-                    <span>${item.price} TL</span>
-                    <span id="stock-${item.id}">Stok: ${item.stock}</span>
-                    <button onclick="addToCart(${item.id}, 1)">Sepete Ekle</button>
-                `;
+
+                const nameSpan = document.createElement("span");
+                nameSpan.textContent = item.name;
+
+                const priceSpan = document.createElement("span");
+                priceSpan.textContent = item.price + " TL";
+
+                const stockSpan = document.createElement("span");
+                stockSpan.id = `stock-${item.id}`;
+                stockSpan.textContent = "Stok: " + item.stock;
+
+                const button = document.createElement("button");
+                button.textContent = "Sepete Ekle";
+                button.addEventListener("click", () => {
+                    console.log(`🛒 addToCart çağrılıyor... itemId=${item.id}`);
+                    addToCart(item.id, 1);
+                });
+
+                li.appendChild(nameSpan);
+                li.appendChild(priceSpan);
+                li.appendChild(stockSpan);
+                li.appendChild(button);
+
                 itemList.appendChild(li);
             });
 
@@ -70,7 +95,6 @@ async function login(email, password) {
         const data = await response.json();
 
         if (response.ok && data.success) {
-            // Store only the token string, not the whole response
             localStorage.setItem("token", data.data.token);
             console.log("Login successful, token stored");
             checkAuthStatus();
@@ -119,7 +143,6 @@ async function addToCart(itemId, quantity) {
 
         alert("Ürün sepete eklendi");
 
-        // Update stock display if available
         const stockElement = document.getElementById(`stock-${itemId}`);
         if (stockElement) {
             const currentStock = parseInt(stockElement.textContent.replace("Stok: ", ""), 10);
@@ -141,3 +164,7 @@ async function logout() {
 window.addToCart = addToCart;
 window.login = login;
 window.logout = logout;
+
+window.addEventListener("click", () => {
+    console.log("🖱️ Sayfada bir şey tıklandı");
+});

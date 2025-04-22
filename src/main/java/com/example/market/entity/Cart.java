@@ -29,8 +29,15 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
+
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> items = new ArrayList<>();
+
+
 
     public int getId() {
         return id;
@@ -44,7 +51,6 @@ public class Cart {
         return user;
     }
 
-    @OneToOne(mappedBy = "cart")
-    private User user;
+
 
 }

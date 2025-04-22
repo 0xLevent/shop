@@ -1,6 +1,7 @@
 package com.example.market.service.impl;
 
-import com.example.market.dto.responses.CartItemResponse;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import com.example.market.entity.Cart;
 import com.example.market.entity.CartItem;
 import com.example.market.entity.Item;
@@ -13,18 +14,21 @@ import com.example.market.repository.UserRepository;
 import com.example.market.service.CartService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
 
     private static final Logger logger = LoggerFactory.getLogger(CartServiceImpl.class);
     private final CartRepository cartRepository;
@@ -33,6 +37,7 @@ public class CartServiceImpl implements CartService {
     private final UserRepository userRepository;
     private final CartItemMapper cartItemMapper;
 
+    @Autowired
     public CartServiceImpl(CartItemMapper cartItemMapper, CartItemRepository cartItemRepository, CartRepository cartRepository, ItemRepository itemRepository, UserRepository userRepository) {
         this.cartItemMapper = cartItemMapper;
         this.cartItemRepository = cartItemRepository;
@@ -43,47 +48,45 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void addToCart(int userId, int itemId, int quantity) {
-        User user = userRepository.findById(userId)
+    public void addToCart(Long userId, int itemId, int quantity) {
+        System.out.println("DEBUG: addToCart fonksiyonu çağrıldı → userId: " + userId + ", itemId: " + itemId + ", quantity: " + quantity);
+
+        User user = userRepository.findByIdWithCart(userId)
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
 
         Cart cart = user.getCart();
         if (cart == null) {
             cart = new Cart();
-            cart.setItems(new ArrayList<>());
+            cart.setUser(user);
             user.setCart(cart);
-            cart = cartRepository.save(cart);
-            user = userRepository.save(user);
-        } else if (cart.getItems() == null) {
-            cart.setItems(new ArrayList<>());
             cart = cartRepository.save(cart);
         }
 
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Ürün bulunamadı"));
 
-        Optional<CartItem> existingItem = cart.getItems().stream()
-                .filter(i -> i.getItem().getId() == itemId)
-                .findFirst();
+        Optional<CartItem> existingItem = cartItemRepository.findByCartAndItem(cart, item);
 
         if (existingItem.isPresent()) {
             CartItem cartItem = existingItem.get();
             cartItem.setQuantity(cartItem.getQuantity() + quantity);
             cartItemRepository.save(cartItem);
         } else {
-            CartItem cartItem = new CartItem();
-            cartItem.setCart(cart);
-            cartItem.setItem(item);
-            cartItem.setQuantity(quantity);
-            cartItemRepository.save(cartItem);
-            cart.getItems().add(cartItem);
-            cartRepository.save(cart);
+            CartItem newCartItem = new CartItem();
+            newCartItem.setCart(cart);
+            newCartItem.setItem(item);
+            newCartItem.setQuantity(quantity);
+            cartItemRepository.save(newCartItem);
+            entityManager.flush();
         }
     }
 
+
+
+
     @Override
     @Transactional
-    public void removeFromCart(int userId, int itemId) {
+    public void removeFromCart(Long userId, int itemId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
 
@@ -105,7 +108,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void updateCartItemQuantity(int userId, int itemId, int quantity) {
+    public void updateCartItemQuantity(Long userId, int itemId, int quantity) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
 
@@ -128,7 +131,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart getCartByUserId(int userId) {
+    public Cart getCartByUserId(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
 
@@ -145,7 +148,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void clearCart(int userId) {
+    public void clearCart(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
 
@@ -160,17 +163,16 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public List<CartItem> getCartItems(int userId) {
+    public List<CartItem> getCartItems(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
 
-        Cart cart = user.getCart();
-        if (cart == null || cart.getItems() == null) {
-            return List.of();
-        }
+        Cart cart = cartRepository.findByUserWithItems(user)
+                .orElseThrow(() -> new RuntimeException("Sepet bulunamadı"));
 
         logger.info("Cart items count for user {}: {}", userId, cart.getItems().size());
 
         return cart.getItems();
     }
+
 }

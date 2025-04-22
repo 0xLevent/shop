@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 @Table(name = "users")
 @Getter
 @Setter
@@ -17,7 +18,12 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Long id;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Cart cart;
+
+
 
     public void setCart(Cart cart) {
         this.cart = cart;
@@ -27,7 +33,7 @@ public class User {
         this.email = email;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -52,9 +58,7 @@ public class User {
     @Column(name = "role")
     private String role;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cart_id", referencedColumnName = "id")
-    private Cart cart;
+
 
 
     public String getEmail() {
@@ -73,7 +77,7 @@ public class User {
         return role;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -85,4 +89,28 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    @Column(name = "balance")
+    private double balance = 500.0;
+
+    @Column(name = "address", length = 255)
+    private String address;
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+
 }

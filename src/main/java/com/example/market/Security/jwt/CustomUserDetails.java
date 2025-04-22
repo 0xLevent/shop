@@ -15,7 +15,7 @@ public class CustomUserDetails implements UserDetails {
     private String email;
     private String password;
     private String role;
-    private Integer userId;
+    private Long userId;
 
     public CustomUserDetails(User user) {
         this.email = user.getEmail();
@@ -24,11 +24,11 @@ public class CustomUserDetails implements UserDetails {
         this.userId = user.getId();
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return this.userId;
     }
 
@@ -66,4 +66,6 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }

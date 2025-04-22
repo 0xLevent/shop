@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @CrossOrigin(origins = "http://localhost:8282", allowCredentials = "true" )
 public class PageController {
 
-    @GetMapping("/contact")
+    @GetMapping("/cart")
     public String contact() {
-        return "contact";
+        return "cart";
     }
 
     @GetMapping("/about")
@@ -37,5 +37,10 @@ public class PageController {
     public String index() {
         return "index";
     }
+    @GetMapping("/profile")
+    public String profilePage() {
+        return "profile";
+    }
+
 }
 

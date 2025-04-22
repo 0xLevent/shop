@@ -43,12 +43,16 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setRole("user");
 
-        Cart cart = cartRepository.save(new Cart());
+        Cart cart = new Cart();
+        cart.setUser(user);
         user.setCart(cart);
 
         User savedUser = userRepository.save(user);
+        cartRepository.save(cart);
+
         return userMapper.toDto(savedUser);
     }
+
 
 
 

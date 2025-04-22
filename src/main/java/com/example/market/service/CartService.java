@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface CartService {
 
-    void addToCart(int userId, int itemId, int quantity);
+    void addToCart(Long userId, int itemId, int quantity);
 
-    void removeFromCart(int userId, int itemId);
+    void removeFromCart(Long userId, int itemId);
 
-    void updateCartItemQuantity(int userId, int itemId, int quantity);
+    void updateCartItemQuantity(Long userId, int itemId, int quantity);
 
-    Cart getCartByUserId(int userId);
+    Cart getCartByUserId(Long userId);
 
-    void clearCart(int userId);
+    void clearCart(Long userId);
 
-    List<CartItem> getCartItems(int userId);
+    List<CartItem> getCartItems(Long userId);
 }

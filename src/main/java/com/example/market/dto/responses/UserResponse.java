@@ -24,4 +24,13 @@ public class UserResponse {
 
     private String email;
 
+    private double balance;
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
 }

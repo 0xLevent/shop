@@ -31,7 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = extractToken(request);
         if (token != null && jwtUtil.validateToken(token)) {
             String username = jwtUtil.extractUsername(token);
-            Integer userId = jwtUtil.extractUserId(token);
+            Long userId = jwtUtil.extractUserId(token);
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 

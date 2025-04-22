@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profilim - Coffo</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="icon" href="/images/fevicon.png" type="image/gif">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<!-- Header Bölümü -->
+<div class="header_section">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="/index.html"><img src="/images/logo.png" alt="Coffo Logo"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/index">Ana Sayfa</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pages/about">Hakkımızda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pages/coffees">Kahveler</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pages/blog">Blog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pages/contact">Sepet</a>
+                    </li>
+                    <li id="userBalance" class="nav-item">
+                        <a class="nav-link">
+                            <i class="fa fa-money" aria-hidden="true"></i> Bakiye: <span id="balanceAmount">0</span> TL
+                        </a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <div class="login_bt">
+                        <ul>
+                            <li id="profileBtn" class="active">
+                                <a href="/profile">
+                                    <span class="user_icon"><i class="fa fa-user" aria-hidden="true"></i></span>Profilim
+                                </a>
+                            </li>
+                            <li id="logoutBtn">
+                                <a href="#">
+                                    <span class="user_icon"><i class="fa fa-sign-out" aria-hidden="true"></i></span>Çıkış Yap
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+        </nav>
+    </div>
+</div>
+
+<!-- Profil Bölümü -->
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="section_title">Profilim</h1>
+            <div id="loading" class="loading">Yükleniyor...</div>
+            <div id="profile-content" class="profile-content" style="display: none;">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>Kullanıcı Adı:</h5>
+                                <p id="username">-</p>
+                            </div>
+                            <div class="col-md-4">
+                                <h5>E-posta:</h5>
+                                <p id="email">-</p>
+                            </div>
+                            <div class="col-md-4">
+                                <h5>Bakiye:</h5>
+                                <p id="balance" class="balance">0 TL</p>
+                                <button id="addFunds" class="btn btn-success">Bakiye Ekle</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="mt-5">Siparişlerim</h3>
+                <div id="orders-container" class="orders-container">
+                    <p>Siparişleriniz yükleniyor...</p>
+                </div>
+
+                <h3 class="mt-5">Adreslerim</h3>
+                <div id="addresses-container" class="addresses-container">
+                    <p>Adresleriniz yükleniyor...</p>
+                    <button id="addAddress" class="btn btn-primary mt-3">Yeni Adres Ekle</button>
+                </div>
+            </div>
+
+            <!-- Adres Ekleme Modal -->
+            <div class="modal fade" id="addressModal" tabindex="-1" role="dialog" aria-labelledby="addressModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addressModalLabel">Yeni Adres Ekle</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addressForm">
+                                <div class="form-group">
+                                    <label for="addressTitle">Adres Başlığı</label>
+                                    <input type="text" class="form-control" id="addressTitle" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="addressLine">Adres</label>
+                                    <textarea class="form-control" id="addressLine" rows="3" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="city">Şehir</label>
+                                    <input type="text" class="form-control" id="city" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="postalCode">Posta Kodu</label>
+                                    <input type="text" class="form-control" id="postalCode" required>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+                            <button type="button" class="btn btn-primary" id="saveAddress">Kaydet</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bakiye Ekleme Modal -->
+            <div class="modal fade" id="balanceModal" tabindex="-1" role="dialog" aria-labelledby="balanceModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="balanceModalLabel">Bakiye Ekle</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="balanceForm">
+                                <div class="form-group">
+                                    <label for="amount">Miktar (TL)</label>
+                                    <input type="number" class="form-control" id="amount" min="10" step="10" value="100">
+                                </div>
+                                <div class="alert alert-info">
+                                    Not: Bu bir demo uygulama olduğu için gerçek bir ödeme işlemi yapılmayacaktır.
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+                            <button type="button" class="btn btn-primary" id="addBalanceBtn">Bakiye Ekle</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Bölümü -->
+<div class="footer_section layout_padding margin_top90">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="footer_social_icon">
+                    <ul>
+                        <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                        <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                        <li><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                        <li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                    </ul>
+                </div>
+                <div class="location_text">
+                    <ul>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-phone" aria-hidden="true"></i><span class="padding_left_10">+90 123 456 7890</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-envelope" aria-hidden="true"></i><span class="padding_left_10">info@coffo.com</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="copyright_section">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <p class="copyright_text">2025 Tüm Hakları Saklıdır. Coffo</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Dosyaları -->
+<script src="/js/jquery.min.js"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="/js/custom.js"></script>
+
+<script>
+    $(document).ready(function() {
+        const token = localStorage.getItem("token");
+
+        // Token kontrolü
+        if (!token || token === "null" || token === "") {
+            window.location.href = "/login";
+            return;
+        }
+
+        // Kullanıcı profil bilgilerini yükle
+        function loadProfile() {
+            $.ajax({
+                url: "http://localhost:8282/api/user/profile",
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                success: function(response) {
+                    if (response && response.success) {
+                        const userData = response.data;
+
+                        // Profil bilgilerini güncelle
+                        $("#username").text(userData.username);
+                        $("#email").text(userData.email);
+                        $("#balance").text(userData.balance + " TL");
+                        $("#balanceAmount").text(userData.balance);
+
+                        // Yükleme göstergesini gizle, içeriği göster
+                        $("#loading").hide();
+                        $("#profile-content").show();
+
+                        // Siparişleri ve adresleri yükle
+                        loadOrders();
+                        loadAddresses();
+                    } else {
+                        alert("Profil bilgileri yüklenemedi!");
+                    }
+                },
+                error: function(xhr) {
+                    console.error("Profil bilgileri yüklenirken hata oluştu:", xhr);
+                    alert("Profil bilgileri yüklenirken bir hata oluştu.");
+                    window.location.href = "/login";
+                }
+            });
+        }
+
+        // Kullanıcının siparişlerini yükle
+        function loadOrders() {
+            $.ajax({
+                url: "http://localhost:8282/api/order/user-orders",
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                success: function(response) {
+                    const ordersContainer = $("#orders-container");
+
+                    if (response && response.length > 0) {
+                        let ordersHtml = '<div class="list-group">';
+
+                        response.forEach(function(order) {
+                            ordersHtml += `
+                        <a href="#" class="list-group-item list-group-item-action">
+                           <div class="d-flex w-100 justify-content-between">
+                              <h5 class="mb-1">Sipariş #${order.id}</h5>
+                              <small>${order.orderDate}</small>
+                           </div>
+                           <p class="mb-1">Tutar: ${order.totalAmount} TL</p>
+                           <small>Durum: ${order.status}</small>
+                        </a>
+                     `;
+                        });
+
+                        ordersHtml += '</div>';
+                        ordersContainer.html(ordersHtml);
+                    } else {
+                        ordersContainer.html('<p>Henüz sipariş bulunmamaktadır.</p>');
+                    }
+                },
+                error: function(xhr) {
+                    console.error("Siparişler yüklenirken hata oluştu:", xhr);
+                    $("#orders-container").html('<p class="text-danger">Siparişler yüklenirken bir hata oluştu!</p>');
+                }
+            });
+        }
+
+        // Kullanıcının adreslerini yükle
+        function loadAddresses() {
+            $.ajax({
+                url: "http://localhost:8282/api/address/user-addresses",
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                success: function(response) {
+                    const addressesContainer = $("#addresses-container");
+
+                    if (response && response.length > 0) {
+                        let addressesHtml = '<div class="list-group">';
+
+                        response.forEach(function(address) {
+                            addressesHtml += `
+                        <div class="list-group-item">
+                           <div class="d-flex w-100 justify-content-between">
+                              <h5 class="mb-1">${address.title}</h5>
+                              <div>
+                                 <button class="btn btn-sm btn-danger delete-address" data-id="${address.id}">Sil</button>
+                              </div>
+                           </div>
+                           <p class="mb-1">${address.addressLine}</p>
+                           <small>${address.city}, ${address.postalCode}</small>
+                        </div>
+                     `;
+                        });
+
+                        addressesHtml += '</div>';
+                        // Adres listesinden sonra "Yeni Adres Ekle" butonunu ekle
+                        addressesHtml += '<button id="addAddress" class="btn btn-primary mt-3">Yeni Adres Ekle</button>';
+
+                        addressesContainer.html(addressesHtml);
+
+                        // Adres silme butonlarına olay dinleyicisi ekle
+                        $(".delete-address").click(function() {
+                            const addressId = $(this).data("id");
+                            deleteAddress(addressId);
+                        });
+
+                        // "Yeni Adres Ekle" butonuna olay dinleyicisi ekle
+                        $("#addAddress").click(function() {
+                            $("#addressModal").modal('show');
+                        });
+                    } else {
+                        addressesContainer.html('<p>Kayıtlı adres bulunmamaktadır.</p><button id="addAddress" class="btn btn-primary mt-3">Yeni Adres Ekle</button>');
+
+                        // "Yeni Adres Ekle" butonuna olay dinleyicisi ekle
+                        $("#addAddress").click(function() {
+                            $("#addressModal").modal('show');
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    console.error("Adresler yüklenirken hata oluştu:", xhr);
+                    $("#addresses-container").html('<p class="text-danger">Adresler yüklenirken bir hata oluştu!</p><button id="addAddress" class="btn btn-primary mt-3">Yeni Adres Ekle</button>');
+
+                    // "Yeni Adres Ekle" butonuna olay dinleyicisi ekle
+                    $("#addAddress").click(function() {
+                        $("#addressModal").modal('show');
+                    });
+                }
+            });
+        }
+
+        // Adres silme fonksiyonu
+        function deleteAddress(addressId) {
+            if (confirm("Bu adresi silmek istediğinizden emin misiniz?")) {
+                $.ajax({
+                    url: `http://localhost:8282/api/address/${addressId}`,
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    success: function(response) {
+                        alert("Adres başarıyla silindi!");
+                        loadAddresses(); // Adres listesini yenile
+                    },
+                    error: function(xhr) {
+                        console.error("Adres silinirken hata oluştu:", xhr);
+                        alert("Adres silinirken bir hata oluştu.");
+                    }
+                });
+            }
+        }
+
+        // Yeni adres ekleme
+        $("#saveAddress").click(function() {
+            const addressData = {
+                title: $("#addressTitle").val(),
+                addressLine: $("#addressLine").val(),
+                city: $("#city").val(),
+                postalCode: $("#postalCode").val()
+            };
+
+            // Form validasyonu
+            if (!addressData.title || !addressData.addressLine || !addressData.city || !addressData.postalCode) {
+                alert("Lütfen tüm alanları doldurun!");
+                return;
+            }
+
+            $.ajax({
+                url: "http://localhost:8282/api/address/add",
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/json"
+                },
+                data: JSON.stringify(addressData),
+                success: function(response) {
+                    alert("Adres başarıyla eklendi!");
+                    $("#addressModal").modal('hide');
+                    $("#addressForm")[0].reset(); // Formu temizle
+                    loadAddresses(); // Adres listesini yenile
+                },
+                error: function(xhr) {
+                    console.error("Adres eklenirken hata oluştu:", xhr);
+                    alert("Adres eklenirken bir hata oluştu.");
+                }
+            });
+        });
+
+        // Bakiye ekleme modalını aç
+        $("#addFunds").click(function() {
+            $("#balanceModal").modal('show');
+        });
+
+        // Bakiye ekleme işlemi
+        $("#addBalanceBtn").click(function() {
+            const amount = $("#amount").val();
+
+            if (!amount || amount < 10) {
+                alert("Lütfen geçerli bir miktar girin!");
+                return;
+            }
+
+            $.ajax({
+                url: "http://localhost:8282/api/user/add-balance",
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/json"
+                },
+                data: JSON.stringify({ amount: parseFloat(amount) }),
+                success: function(response) {
+                    alert("Bakiye başarıyla eklendi!");
+                    $("#balanceModal").modal('hide');
+                    loadProfile(); // Profil bilgilerini yenile
+                },
+                error: function(xhr) {
+                    console.error("Bakiye eklenirken hata oluştu:", xhr);
+                    alert("Bakiye eklenirken bir hata oluştu.");
+                }
+            });
+        });
+
+        // Çıkış yap
+        $("#logoutBtn").click(function(e) {
+            e.preventDefault();
+            localStorage.removeItem("token");
+            alert("Çıkış yapıldı!");
+            window.location.href = "/index.html";
+        });
+
+        loadProfile();
+    });
+</script>
+
+</body>
+</html>

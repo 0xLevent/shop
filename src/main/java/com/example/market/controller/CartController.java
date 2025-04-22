@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/cart/")
-@RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:8282", allowCredentials = "true")
+
 public class CartController {
 
     private final CartService cartService;
@@ -36,7 +36,7 @@ public class CartController {
     private final CartItemMapper cartItemMapper;
     private static final Logger logger = LoggerFactory.getLogger(CartController.class);
 
-    private Integer getAuthenticatedUserId() {
+    private Long getAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
             return ((CustomUserDetails) authentication.getPrincipal()).getUserId();
@@ -46,11 +46,16 @@ public class CartController {
 
     @PostMapping("/add")
     public ResponseEntity<String> addToCart(@RequestBody CartItemRequest request) {
-        Integer userId = getAuthenticatedUserId();
+        System.out.println("🧪 addToCart LOG → request geldi");
+        System.out.println("🧪 itemId: " + request.getItemId());
+        System.out.println("🧪 quantity: " + request.getQuantity());
+
+        Long userId = getAuthenticatedUserId();
         if (userId == null) {
             logger.warn("User not authenticated");
             return ResponseEntity.status(401).body("User not authenticated");
         }
+        System.out.println("🚀 addToCart() çağrıldı → userId: " + userId + ", itemId: " + request.getItemId() + ", quantity: " + request.getQuantity());
 
         try {
             cartService.addToCart(userId, request.getItemId(), request.getQuantity());
@@ -63,7 +68,7 @@ public class CartController {
 
     @DeleteMapping("/remove")
     public ResponseEntity<String> removeFromCart(@RequestParam int itemId) {
-        Integer userId = getAuthenticatedUserId();
+        Long userId = getAuthenticatedUserId();
         if (userId == null) {
             return ResponseEntity.status(401).body("User not authenticated");
         }
@@ -74,7 +79,7 @@ public class CartController {
 
     @PutMapping("/update-quantity")
     public ResponseEntity<String> updateCartItemQuantity(@RequestParam int itemId, @RequestParam int quantity) {
-        Integer userId = getAuthenticatedUserId();
+        Long userId = getAuthenticatedUserId();
         if (userId == null) {
             return ResponseEntity.status(401).body("User not authenticated");
         }
@@ -85,7 +90,7 @@ public class CartController {
 
     @GetMapping("/user")
     public ResponseEntity<Cart> getCartByUserId() {
-        Integer userId = getAuthenticatedUserId();
+        Long userId = getAuthenticatedUserId();
         if (userId == null) {
             return ResponseEntity.status(401).body(null);
         }
@@ -95,7 +100,7 @@ public class CartController {
 
     @DeleteMapping("/clear")
     public ResponseEntity<String> clearCart() {
-        Integer userId = getAuthenticatedUserId();
+        Long userId = getAuthenticatedUserId();
         if (userId == null) {
             return ResponseEntity.status(401).body("User not authenticated");
         }
@@ -106,7 +111,7 @@ public class CartController {
 
     @GetMapping("/items")
     public ResponseEntity<List<CartItemResponse>> getCartItems() {
-        Integer userId = getAuthenticatedUserId();
+        Long userId = getAuthenticatedUserId();
         if (userId == null) {
             return ResponseEntity.status(401).body(null);
         }
